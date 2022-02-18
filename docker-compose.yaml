@@ -1,0 +1,47 @@
+version: "3"
+services:
+  home:
+    container_name: home
+    hostname: home
+    build:
+      context: ./home
+      dockerfile: Dockerfile
+    ports:
+      - 6000:80
+  alpha:
+    container_name: alpha
+    hostname: alpha
+    build:
+      context: ./alpha
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+  beta:
+    container_name: beta
+    hostname: beta
+    build:
+      context: ./beta
+      dockerfile: Dockerfile
+    ports:
+      - 8081:80
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 5000:80
+    depends_on:
+      - alpha
+      - beta
+  db:
+    image: mariadb:10.2
+    restart: always
+    environment:
+      MYSQL_DATABASE: game
+      MYSQL_USER: hu
+      MYSQL_PASSWORD: hu
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db-dump:/var/lib/mysql
+volumes:
+  db:
